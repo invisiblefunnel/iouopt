@@ -1,0 +1,25 @@
+name: Actions
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  run_tests:
+    name: Run Tests
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.11", "3.10", "3.9", "3.8"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/checkout@v4
+      - run: pip install --upgrade pip
+      - run: pip install ".[ci]"
+      - run: mypy --check-untyped-defs iouopt/ tests/
+      - run: black --check iouopt/ tests/
+      - run: isort --check iouopt/ tests/
+      - run: python -m unittest discover tests/ "*_test.py"

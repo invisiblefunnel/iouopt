@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools"]
+
+[project]
+name = "iouopt"
+dynamic = ["version"]
+description = "Simplify group IOU settlement."
+readme = "README.md"
+license = { file = "LICENSE" }
+dependencies = ["networkx>=3.0"]
+requires-python = ">=3.8"
+
+[tool.setuptools.dynamic]
+version = { attr = "iouopt.__version__" }
+
+[project.optional-dependencies]
+ci = ["black", "isort", "mypy"]
+
+[project.urls]
+Homepage = "https://github.com/invisiblefunnel/iouopt"
+Issues = "https://github.com/invisiblefunnel/iouopt/issues"

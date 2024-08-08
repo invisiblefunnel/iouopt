@@ -1,0 +1,7 @@
+Expense,Total Amount ($),Paid by,Split Among,Amount per Person ($)
+Accommodation,1200,Cooper,"Cooper,Brand,Romilly,Doyle",300
+Food & Drinks,800,Brand,"Cooper,Brand,Romilly,Doyle",200
+Transportation,500,Romilly,"Cooper,Brand,Romilly,Doyle",125
+Activities,600,Doyle,"Cooper,Brand,Romilly,Doyle",150
+Souvenirs,200,Cooper,"Cooper,Brand,Romilly",66.67
+Miscellaneous,150,Brand,"Brand,Romilly,Doyle",50
