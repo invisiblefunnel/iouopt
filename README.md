@@ -24,3 +24,11 @@ for borrower, lender, amount in j.simplify():
 ```
 
 **Note:** `iouopt` requires that all amounts are represented as an `int`. This is a constraint of the underlying [network simplex](https://networkx.org/documentation/networkx-3.3/reference/algorithms/generated/networkx.algorithms.flow.network_simplex.html) algorithm. If you need to express partial units, such as 15.78, multiply amounts by a suitable constant factor (e.g., 100) and then convert them to an int.
+
+## Install
+
+Install the latest version from the [Python Package Index (PyPI)](https://pypi.org/project/iouopt/).
+
+```console
+$ pip install iouopt
+```
