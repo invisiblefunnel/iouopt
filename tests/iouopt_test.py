@@ -2,7 +2,7 @@ import random
 import unittest
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List, Set
 
 from iouopt import Journal
 
@@ -42,61 +42,49 @@ class JournalTest(unittest.TestCase):
         self.assertEqual("amount < 0", str(cm.exception))
 
     def test_simplify(self):
-        for _ in range(10_000):
+        for _ in range(20_000):
             inputs = generate_ious(
-                num_ious=random.randint(1, 200),
-                num_parties=random.randint(2, 20),
+                num_ious=random.randint(1, 500),
+                num_parties=random.randint(2, 50),
                 max_amount=1000,
             )
 
-            for strict in (True, False):
-                j = Journal[int](strict)
-                for iou in inputs:
-                    j.append(iou.borrower, iou.lender, iou.amount)
+            j = Journal[int]()
+            for iou in inputs:
+                j.append(iou.borrower, iou.lender, iou.amount)
 
-                outputs = []
-                for borrower, lender, amount in j.simplify():
-                    outputs.append(IOU(borrower, lender, amount))
+            outputs = []
+            for borrower, lender, amount in j.simplify():
+                outputs.append(IOU(borrower, lender, amount))
 
-                self.check_settled(inputs, outputs, strict)
+            self.check_settled(inputs, outputs)
 
-    def check_settled(self, inputs: List[IOU], outputs: List[IOU], strict: bool):
+    def check_settled(self, inputs: List[IOU], outputs: List[IOU]):
         # Calculate input/expected values
         input_flow: Dict[int, int] = defaultdict(int)
-        input_pairs: Set[Tuple[int, int]] = set()
         for iou in inputs:
             input_flow[iou.lender] += iou.amount
             input_flow[iou.borrower] -= iou.amount
-            input_pairs.add((iou.borrower, iou.lender))
 
         # Calculate output/actual values
         output_flow: Dict[int, int] = defaultdict(int)
-        output_pairs: Set[Tuple[int, int]] = set()
         output_borrowers: Set[int] = set()
         output_lenders: Set[int] = set()
         for iou in outputs:
             output_flow[iou.lender] += iou.amount
             output_flow[iou.borrower] -= iou.amount
-            output_pairs.add((iou.borrower, iou.lender))
             output_borrowers.add(iou.borrower)
             output_lenders.add(iou.lender)
 
         # Verify IOUs are settled correctly
-        for party in input_flow.keys():
-            self.assertEqual(input_flow[party], output_flow[party])
-        for party in output_flow.keys():
+        for party in set(input_flow.keys()).union(set(output_flow.keys())):
             self.assertEqual(input_flow[party], output_flow[party])
 
-        if strict:
-            # Verify that parties transacted in the original set of IOUs
-            for output_pair in output_pairs:
-                self.assertIn(output_pair, input_pairs)
-        else:
-            # Verify that parties are either payer or payee, not both, in the solution
-            self.assertEqual(
-                len(output_borrowers) + len(output_lenders),
-                len(output_borrowers | output_lenders),
-            )
+        # Verify that parties are either payer or payee, not both, in the solution
+        self.assertEqual(
+            len(output_borrowers) + len(output_lenders),
+            len(output_borrowers | output_lenders),
+        )
 
 
 def generate_ious(num_ious: int, num_parties: int, max_amount: int) -> List[IOU]:
