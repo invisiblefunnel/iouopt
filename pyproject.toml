@@ -7,7 +7,7 @@ dynamic = ["version"]
 description = "Simplify group IOU settlement."
 readme = "README.md"
 license = { file = "LICENSE" }
-dependencies = ["networkx>=3.0"]
+dependencies = ["ortools"]
 requires-python = ">=3.8"
 
 [tool.setuptools.dynamic]
